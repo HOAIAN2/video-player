@@ -17,10 +17,10 @@
  */
 function createVideoPlayer(config) {
     function createElement(htmlString) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlString, 'text/html').body;
         const fragment = document.createDocumentFragment();
-        fragment.append(...doc.childNodes);
+        const template = document.createElement('template');
+        template.innerHTML = htmlString.trim();
+        fragment.append(...template.content.childNodes);
         return fragment;
     }
     function createSVGElement(string) {
