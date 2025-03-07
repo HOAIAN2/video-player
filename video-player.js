@@ -330,7 +330,9 @@ function createVideoPlayer(config) {
             const width = rect.width;
             if (VIDEO_ELEMENT.duration) {
                 const percent = (offsetX / width);
-                PLAYER_PROGRESS.style.transform = `scaleX(${percent})`;
+                if (percent >= 0 && percent <= 1) {
+                    PLAYER_PROGRESS.style.transform = `scaleX(${percent})`;
+                }
             }
         }
         function handlePointerMove(e) {
@@ -341,8 +343,10 @@ function createVideoPlayer(config) {
             const width = rect.width;
             const percent = (offsetX / width);
             HOVER_TIME.classList.remove('hide');
-            HOVER_TIME.style.left = offsetX + 'px';
-            HOVER_TIME.textContent = toHHMMSS(percent * VIDEO_ELEMENT.duration);
+            if (percent >= 0 && percent <= 1) {
+                HOVER_TIME.style.left = offsetX + 'px';
+                HOVER_TIME.textContent = toHHMMSS(percent * VIDEO_ELEMENT.duration);
+            }
         }
         updateProgress(e);
         document.addEventListener('pointermove', handlePointerMove);
