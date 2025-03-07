@@ -43,12 +43,12 @@ function createVideoPlayer(config) {
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA'];
     const PLAY_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-            <polygon points="0, 0 80, 50 0, 100" />
+            <polygon points="25, 15 80, 50 25, 85"/>
         </svg>`;
     const PAUSE_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-            <rect width="25" height="100" x="0" y="0" />
-            <rect width="25" height="100" x="45" y="0" />
+            <rect width="25" height="70" x="15" y="15"/>
+            <rect width="25" height="70" x="60" y="15"/>
         </svg>`;
     const FORWARD_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
@@ -157,6 +157,7 @@ function createVideoPlayer(config) {
                     </div>
                 </div>
             </div>
+            <div class="action-overlay"></div>
             <video class="player-video" src="${config.sources[0].src}"></video>
             <div class="player-controller hide">
                 <div class="hover-time hide"></div>
@@ -196,6 +197,7 @@ function createVideoPlayer(config) {
     const PLAYER_PROGRESS_OVERLAY = PLAYER_ELEMENT.querySelector('.player-controller-progress-overlay');
     const PLAYER_PROGRESS = PLAYER_ELEMENT.querySelector('.player-controller-progress');
 
+    const ACTION_OVERLAY = PLAYER_ELEMENT.querySelector('.action-overlay');
     const VIDEO_ELEMENT = PLAYER_ELEMENT.querySelector('video');
 
     const PLAY_BUTTON = PLAYER_ELEMENT.querySelector('.button-play');
@@ -213,6 +215,10 @@ function createVideoPlayer(config) {
     const SETTING_CONTENT = PLAYER_ELEMENT.querySelector('.setting-content');
     const SETTING_VALUES = PLAYER_ELEMENT.querySelector('.setting-values');
 
+    function showAction(svgString) {
+        const svg = createSVGElement(svgString);
+        ACTION_OVERLAY.replaceChildren(svg);
+    }
     function handleAutoHideController() {
         let timeoutId = 0;
         if (PLAYER_CONTROLLER.classList.contains('hide')) {
@@ -241,13 +247,21 @@ function createVideoPlayer(config) {
     }
     function forward() {
         VIDEO_ELEMENT.currentTime += config.skipSeconds;
+        showAction(FORWARD_SVG);
     };
     function backward() {
         VIDEO_ELEMENT.currentTime -= config.skipSeconds;
+        showAction(BACKWARD_SVG);
     };
     function playOrPauseVideo() {
-        if (VIDEO_ELEMENT.paused) VIDEO_ELEMENT.play();
-        else VIDEO_ELEMENT.pause();
+        if (VIDEO_ELEMENT.paused) {
+            VIDEO_ELEMENT.play();
+            showAction(PLAY_SVG);
+        }
+        else {
+            VIDEO_ELEMENT.pause();
+            showAction(PAUSE_SVG);
+        }
     };
     function backSetting() {
         SETTING_TYPES.classList.remove('hide');
