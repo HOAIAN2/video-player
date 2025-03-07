@@ -319,6 +319,11 @@ function createVideoPlayer(config) {
     // Handle progress bar
     PLAYER_PROGRESS_OVERLAY.addEventListener('pointerdown', (e) => {
         e.preventDefault();
+
+        // Pause video when seeking
+        const wasPlaying = !VIDEO_ELEMENT.paused;
+        VIDEO_ELEMENT.pause();
+
         function updateProgress(e) {
             const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
             const offsetX = e.clientX - rect.left; // Use clientX for mobile basue native offsetX not work on mobile
@@ -350,6 +355,9 @@ function createVideoPlayer(config) {
             const realTime = (offsetX / width) * VIDEO_ELEMENT.duration;
             VIDEO_ELEMENT.currentTime = Math.max(0, Math.min(realTime, VIDEO_ELEMENT.duration));
             HOVER_TIME.classList.add('hide');
+
+            // Resume video if it was playing before
+            if (wasPlaying) VIDEO_ELEMENT.play();
         }, { once: true, passive: false });
     });
 
