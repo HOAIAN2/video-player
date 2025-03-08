@@ -15,6 +15,7 @@ The `createVideoPlayer` function creates a custom video player with enhanced con
 - **Multiple Video Sources**: Allows switching between different video sources.
 - **Subtitle Support**: Easily toggle subtitles on and off.
 - **Auto-Hide Controls**: The controller auto-hides after a specified period of inactivity.
+- **Picture-in-Picture (PiP) Mode**: Allows the video to play in a small floating window while multitasking.
 
 ## Installation
 
