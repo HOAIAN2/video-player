@@ -148,17 +148,17 @@ function createVideoPlayer(config = {}) {
                 <div class="setting-types">
                     <div data-type="speed">
                         ${PLAY_SPEED_SVG}
-                        <p>${settingLabels.speed}</p>
+                        <p>${settingLabels.speed || ''}</p>
                         <p>1x</p>
                     </div>
                     <div data-type="source">
                         ${SOURCE_SVG}
-                        <p>${settingLabels.source}</p>
+                        <p>${settingLabels.source || ''}</p>
                         <p>${sources[0].label}</p>
                     </div>
                     <div data-type="subtitle">
                         ${SUBTITLE_SVG}
-                        <p>${settingLabels.subtitle}</p>
+                        <p>${settingLabels.subtitle || ''}</p>
                         <p>Off</p>
                     </div>
                 </div>
