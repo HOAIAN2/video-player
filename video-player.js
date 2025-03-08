@@ -15,7 +15,19 @@
  * @param {{source:string,speed:string,subtitle:string}}[config.settingLabels] - Custom labels for settings.
  * @returns {DocumentFragment} - The player element containing the video and custom controls.
  */
-function createVideoPlayer(config) {
+function createVideoPlayer(config = {}) {
+    const {
+        sources = [],
+        skipSeconds = 5,
+        autoHideControllerAfter = 3000,
+        forceLandscape = true,
+        speedSettings = [0.5, 1, 1.5, 2],
+        settingLabels = {
+            source: 'Source',
+            speed: 'Speed',
+            subtitle: 'Subtitles',
+        },
+    } = config;
     function createElement(htmlString) {
         const fragment = document.createDocumentFragment();
         const template = document.createElement('template');
@@ -110,7 +122,7 @@ function createVideoPlayer(config) {
             <rect x="40" y="55" width="40" height="8" rx="2" fill="currentColor"/>
         </svg>`;
 
-    const speedSettingsHTML = config.speedSettings.map(setting => {
+    const speedSettingsHTML = speedSettings.map(setting => {
         return (
             `
             <div class="setting-value" data-setting-type="speed" data-setting-value="${setting}" >
@@ -119,7 +131,7 @@ function createVideoPlayer(config) {
             `
         );
     }).join('');
-    const sourceSettingsHTML = config.sources.map(source => {
+    const sourceSettingsHTML = sources.map(source => {
         return (
             `
             <div class="setting-value" data-setting-type="source" data-setting-value="${source.label}">
@@ -136,17 +148,17 @@ function createVideoPlayer(config) {
                 <div class="setting-types">
                     <div data-type="speed">
                         ${PLAY_SPEED_SVG}
-                        <p>${config.settingLabels.speed}</p>
+                        <p>${settingLabels.speed}</p>
                         <p>1x</p>
                     </div>
                     <div data-type="source">
                         ${SOURCE_SVG}
-                        <p>${config.settingLabels.source}</p>
-                        <p>${config.sources[0].label}</p>
+                        <p>${settingLabels.source}</p>
+                        <p>${sources[0].label}</p>
                     </div>
                     <div data-type="subtitle">
                         ${SUBTITLE_SVG}
-                        <p>${config.settingLabels.subtitle}</p>
+                        <p>${settingLabels.subtitle}</p>
                         <p>Off</p>
                     </div>
                 </div>
@@ -158,7 +170,7 @@ function createVideoPlayer(config) {
                 </div>
             </div>
             <div class="action-overlay"></div>
-            <video class="player-video" src="${config.sources[0].src}"></video>
+            <video class="player-video" src="${sources[0].src}"></video>
             <div class="player-controller hide">
                 <div class="hover-time hide"></div>
                 <div class="wrap-buttons">
@@ -225,7 +237,7 @@ function createVideoPlayer(config) {
             PLAYER_CONTROLLER.classList.remove('hide');
             timeoutId = setTimeout(() => {
                 PLAYER_CONTROLLER.classList.add('hide');
-            }, config.autoHideControllerAfter);
+            }, autoHideControllerAfter);
         }
         else {
             clearTimeout(timeoutId);
@@ -238,7 +250,7 @@ function createVideoPlayer(config) {
         else {
             PLAYER_CONTAINER.requestFullscreen();
 
-            if (config.forceLandscape && screen.orientation && screen.orientation.lock) {
+            if (forceLandscape && screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock("landscape").catch((err) => {
                     console.error("Failed to lock orientation:", err);
                 });
@@ -246,11 +258,11 @@ function createVideoPlayer(config) {
         }
     }
     function forward() {
-        VIDEO_ELEMENT.currentTime += config.skipSeconds;
+        VIDEO_ELEMENT.currentTime += skipSeconds;
         showAction(FORWARD_SVG);
     };
     function backward() {
-        VIDEO_ELEMENT.currentTime -= config.skipSeconds;
+        VIDEO_ELEMENT.currentTime -= skipSeconds;
         showAction(BACKWARD_SVG);
     };
     function playOrPauseVideo() {
@@ -268,6 +280,32 @@ function createVideoPlayer(config) {
         SETTING_CONTENT.classList.add('hide');
         // SETTING_VALUES.replaceChildren();
     };
+    function handleHideSetting(e) {
+        if (!document.body.contains(PLAYER_CONTAINER)) {
+            return document.removeEventListener('pointerdown', handleHideSetting);
+        }
+        if (SETTING_BUTTON.contains(e.target)) return;
+        if (!SETTING_CONTAINER.contains(e.target)) {
+            SETTING_CONTAINER.classList.add('hide');
+        }
+    }
+    function handleKeyDownEvents(e) {
+        if (!document.body.contains(PLAYER_CONTAINER)) {
+            return window.removeEventListener('keydown', handleKeyDownEvents);
+        }
+        if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return;
+        if (e.target.role === 'textbox') return;
+        if (e.ctrlKey) return;
+        if (e.code === 'ArrowRight') {
+            forward();
+        }
+        if (e.code === 'ArrowLeft') {
+            backward();
+        }
+        if (e.code === 'Space') {
+            playOrPauseVideo();
+        }
+    }
 
     PLAYER_CONTAINER.addEventListener('pointermove', handleAutoHideController);
 
@@ -414,13 +452,13 @@ function createVideoPlayer(config) {
             SETTING_TYPES.classList.add('hide');
             SETTING_CONTENT.classList.remove('hide');
             SETTING_VALUES.replaceChildren(createElement(speedSettingsHTML));
-            BACK_SETTING_BUTTON.textContent = `< ${config.settingLabels.speed}`;
+            BACK_SETTING_BUTTON.textContent = `< ${settingLabels.speed}`;
         }
         if (SETTING_TYPES.querySelector('[data-type="source"]')?.contains(e.target)) {
             SETTING_TYPES.classList.add('hide');
             SETTING_CONTENT.classList.remove('hide');
             SETTING_VALUES.replaceChildren(createElement(sourceSettingsHTML));
-            BACK_SETTING_BUTTON.textContent = `< ${config.settingLabels.source}`;
+            BACK_SETTING_BUTTON.textContent = `< ${settingLabels.source}`;
         }
         if (SETTING_TYPES.querySelector('[data-type="subtitle"]')?.contains(e.target)) {
             return;
@@ -445,7 +483,7 @@ function createVideoPlayer(config) {
             }
 
             if (settingType === 'source') {
-                const source = config.sources.find(source => source.label === settingValue);
+                const source = sources.find(source => source.label === settingValue);
 
                 const currentTime = VIDEO_ELEMENT.currentTime;
                 const currentPaused = VIDEO_ELEMENT.paused;
@@ -463,27 +501,9 @@ function createVideoPlayer(config) {
         }
     });
 
-    window.addEventListener('pointerdown', function (e) {
-        if (SETTING_BUTTON.contains(e.target)) return;
-        if (!SETTING_CONTAINER.contains(e.target)) {
-            SETTING_CONTAINER.classList.add('hide');
-        }
-    });
+    document.addEventListener('pointerdown', handleHideSetting);
 
-    window.addEventListener('keydown', (e) => {
-        if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return;
-        if (e.target.role === 'textbox') return;
-        if (e.ctrlKey) return;
-        if (e.code === 'ArrowRight') {
-            forward();
-        }
-        if (e.code === 'ArrowLeft') {
-            backward();
-        }
-        if (e.code === 'Space') {
-            playOrPauseVideo();
-        }
-    });
+    window.addEventListener('keydown', handleKeyDownEvents);
 
     return PLAYER_ELEMENT;
 }
