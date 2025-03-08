@@ -176,6 +176,7 @@ function createVideoPlayer(config = {}) {
                 </div>
             </div>
             <div class="action-overlay"></div>
+            <div class="loading-spinner"></div>
             <video class="player-video" src="${sources[0].src}"></video>
             <div class="player-controller hide">
                 <div class="hover-time hide"></div>
@@ -217,6 +218,7 @@ function createVideoPlayer(config = {}) {
     const PLAYER_PROGRESS = PLAYER_ELEMENT.querySelector('.player-controller-progress');
 
     const ACTION_OVERLAY = PLAYER_ELEMENT.querySelector('.action-overlay');
+    const LOADING_SPINNER = PLAYER_ELEMENT.querySelector('.loading-spinner');
     const VIDEO_ELEMENT = PLAYER_ELEMENT.querySelector('video');
 
     const PLAY_BUTTON = PLAYER_ELEMENT.querySelector('.button-play');
@@ -259,8 +261,8 @@ function createVideoPlayer(config = {}) {
             PLAYER_CONTAINER.requestFullscreen();
 
             if (forceLandscape && screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock("landscape").catch((err) => {
-                    console.error("Failed to lock orientation:", err);
+                screen.orientation.lock('landscape').catch((err) => {
+                    console.error('Failed to lock orientation:', err);
                 });
             }
         }
@@ -274,9 +276,18 @@ function createVideoPlayer(config = {}) {
         showAction(BACKWARD_SVG);
     };
     function playOrPauseVideo() {
+        if (VIDEO_ELEMENT.readyState < 3) { // 3 means "can play"
+            console.log('Cannot play, video is still buffering...');
+            return;
+        }
         if (VIDEO_ELEMENT.paused) {
-            VIDEO_ELEMENT.play();
-            showAction(PLAY_SVG);
+            VIDEO_ELEMENT.play()
+                .then(() => {
+                    showAction(PLAY_SVG);
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
         }
         else {
             VIDEO_ELEMENT.pause();
@@ -329,6 +340,7 @@ function createVideoPlayer(config = {}) {
     });
 
     PLAYER_PROGRESS_OVERLAY.addEventListener('pointermove', (e) => {
+        if (!VIDEO_ELEMENT.duration) return;
         const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
         const offsetX = e.clientX - rect.left;
         const width = rect.width;
@@ -372,6 +384,18 @@ function createVideoPlayer(config = {}) {
             PLAYER_PROGRESS.style.transform = `scaleX(${percent})`;
             VIDEO_TIMESTAMP.querySelector('p').textContent = `${toHHMMSS(VIDEO_ELEMENT.currentTime)} / ${toHHMMSS(VIDEO_ELEMENT.duration)}`;
         }
+    });
+
+    VIDEO_ELEMENT.addEventListener('waiting', () => {
+        setTimeout(() => {
+            if (VIDEO_ELEMENT.readyState < 3) {
+                LOADING_SPINNER.style.display = 'block';
+            }
+        }, 500);
+    });
+
+    VIDEO_ELEMENT.addEventListener('canplaythrough', () => {
+        LOADING_SPINNER.style.display = 'none';
     });
 
     // Handle progress bar
