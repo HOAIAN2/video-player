@@ -366,6 +366,14 @@
         max-height: 65px;
     }
 
+    .buttons-left {
+        gap: 15px;
+    }
+
+    .buttons-right {
+        gap: 15px;
+    }
+
     .volume-master {
         display: none;
     }

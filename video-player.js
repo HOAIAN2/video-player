@@ -96,6 +96,12 @@ function createVideoPlayer(config = {}) {
             <polygon points="50,5 90,25 90,75 50,95 10,75 10,25" fill="none" stroke-width="8"/>
             <circle cx="50" cy="50" r="20" fill="none" stroke-width="8"/>
         </svg>`;
+    const PIP_SVG =
+        `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="10" y="20" width="80" height="60" rx="5" ry="5" fill="none" />
+            <rect x="45" y="45" width="30" height="20" rx="2" ry="2" />
+        </svg>`;
     const PLAY_SPEED_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8" fill="none" />
@@ -192,6 +198,7 @@ function createVideoPlayer(config = {}) {
                             <button title="backward" type="button" class="button-backward">${BACKWARD_SVG}</button>
                             <button title="forward" type="button" class="button-forward">${FORWARD_SVG}</button>
                             <button title="setting" type="button" class="button-setting">${SETTING_SVG}</button>
+                            <button title="picture in picture" type="button" class="button-pip">${PIP_SVG}</button>
                             <button title="fullscreen" type="button" class="button-fullscreen">${EXPAND_SVG}</button>
                         </div>
                     </div>
@@ -218,6 +225,7 @@ function createVideoPlayer(config = {}) {
     const FORWARD_BUTTON = PLAYER_ELEMENT.querySelector('.button-forward');
     const BACKWARD_BUTTON = PLAYER_ELEMENT.querySelector('.button-backward');
     const SETTING_BUTTON = PLAYER_ELEMENT.querySelector('.button-setting');
+    const PIP_BUTTON = PLAYER_ELEMENT.querySelector('.button-pip');
     const FULLSCREEN_BUTTON = PLAYER_ELEMENT.querySelector('.button-fullscreen');
 
     const VIDEO_TIMESTAMP = PLAYER_ELEMENT.querySelector('.video-timestamp');
@@ -311,6 +319,15 @@ function createVideoPlayer(config = {}) {
 
     PLAYER_CONTAINER.addEventListener('pointerdown', handleAutoHideController);
 
+    PLAYER_CONTAINER.addEventListener('pointerover', (e) => {
+        if (e.target === PLAYER_PROGRESS_OVERLAY) {
+            HOVER_TIME.classList.remove('hide');
+        }
+        else {
+            HOVER_TIME.classList.add('hide');
+        }
+    });
+
     PLAYER_PROGRESS_OVERLAY.addEventListener('pointermove', (e) => {
         const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
         const offsetX = e.clientX - rect.left;
@@ -318,17 +335,6 @@ function createVideoPlayer(config = {}) {
         const percent = (offsetX / width);
         HOVER_TIME.style.left = offsetX + 'px';
         HOVER_TIME.textContent = toHHMMSS(percent * VIDEO_ELEMENT.duration);
-
-        let timeoutId = 0;
-        if (HOVER_TIME.classList.contains('hide')) {
-            HOVER_TIME.classList.remove('hide');
-            timeoutId = setTimeout(() => {
-                HOVER_TIME.classList.add('hide');
-            }, 1000);
-        }
-        else {
-            clearTimeout(timeoutId);
-        }
     });
 
     PLAY_BUTTON.addEventListener('pointerdown', playOrPauseVideo);
@@ -431,6 +437,10 @@ function createVideoPlayer(config = {}) {
     VIDEO_ELEMENT.addEventListener('pause', () => {
         const svg = createSVGElement(PLAY_SVG);
         PLAY_BUTTON.replaceChildren(svg);
+    });
+
+    PIP_BUTTON.addEventListener('pointerdown', (e) => {
+        VIDEO_ELEMENT.requestPictureInPicture();
     });
 
     FULLSCREEN_BUTTON.addEventListener('pointerdown', toggleFullScreen);
