@@ -4,7 +4,11 @@
     box-sizing: border-box;
     scroll-behavior: smooth;
     /**Prevent highlight on mobile*/
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; /* Chrome, Safari */
+    -webkit-touch-callout: none; /* iOS Safari */
+    user-select: none; /* General */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
 
     container-type: inline-size;
     container-name: player-container;
@@ -15,7 +19,11 @@
     padding: 0;
     box-sizing: border-box;
     scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
+    /**Prevent highlight on mobile*/
+    -webkit-tap-highlight-color: transparent; 
+    -webkit-touch-callout: none; 
+    -moz-user-select: none; 
+    -ms-user-select: none;
     user-select: none;
 }
 
