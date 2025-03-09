@@ -51,6 +51,13 @@ function createVideoPlayer(config = {}) {
             .filter((v, i) => v !== '00' || i > 0)
             .join(':');
     }
+    function debounce(func, delay) {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => { func(...args); }, delay);
+        };
+    };
 
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA'];
     const PLAY_SVG =
@@ -325,6 +332,9 @@ function createVideoPlayer(config = {}) {
             playOrPauseVideo();
         }
     }
+    const seekingDebounce = debounce((time) => {
+        VIDEO_ELEMENT.currentTime = time;
+    }, 300);
 
     PLAYER_CONTAINER.addEventListener('pointermove', handleAutoHideController);
 
@@ -428,6 +438,7 @@ function createVideoPlayer(config = {}) {
             if (percent >= 0 && percent <= 1) {
                 HOVER_TIME.style.left = offsetX + 'px';
                 HOVER_TIME.textContent = toHHMMSS(percent * VIDEO_ELEMENT.duration);
+                seekingDebounce(percent * VIDEO_ELEMENT.duration);
             }
         }
         updateProgress(e);
