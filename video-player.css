@@ -6,9 +6,9 @@
     /**Prevent highlight on mobile*/
     -webkit-tap-highlight-color: transparent; /* Chrome, Safari */
     -webkit-touch-callout: none; /* iOS Safari */
-    user-select: none; /* General */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE/Edge */
+    user-select: none; /* General */
 
     container-type: inline-size;
     container-name: player-container;
