@@ -278,10 +278,12 @@ function createVideoPlayer(config = {}) {
     }
     function forward() {
         VIDEO_ELEMENT.currentTime += skipSeconds;
+        PLAYER_PROGRESS.style.transform = `scaleX(${VIDEO_ELEMENT.currentTime / VIDEO_ELEMENT.duration})`;
         showAction(FORWARD_SVG);
     };
     function backward() {
         VIDEO_ELEMENT.currentTime -= skipSeconds;
+        PLAYER_PROGRESS.style.transform = `scaleX(${VIDEO_ELEMENT.currentTime / VIDEO_ELEMENT.duration})`;
         showAction(BACKWARD_SVG);
     };
     function playOrPauseVideo() {
