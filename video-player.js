@@ -434,6 +434,7 @@ function createVideoPlayer(config = {}) {
         document.addEventListener('pointermove', handlePointerMove);
         document.addEventListener('pointerup', (e) => {
             e.preventDefault();
+            updateProgress(e);
             document.removeEventListener('pointermove', handlePointerMove);
             const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
             const offsetX = e.clientX - rect.left;
