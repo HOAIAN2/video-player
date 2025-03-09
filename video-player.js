@@ -190,9 +190,10 @@ function createVideoPlayer(config = {}) {
             <div class="player-controller hide">
                 <div class="hover-time hide"></div>
                 <div class="wrap-buttons">
-                    <div class="player-controller-progress-overlay"></div>
-                    <div class="player-controller-progress-background"></div>
-                    <div class="player-controller-progress"></div>
+                    <div class="player-controller-progress-overlay">
+                        <div class="player-controller-progress-background"></div>
+                        <div class="player-controller-progress"></div>
+                    </div>
                     <div class="player-controller-buttons">
                         <div class="buttons-left">
                             <button title="play" type="button" class="button-play">${PLAY_SVG}</button>
@@ -345,7 +346,7 @@ function createVideoPlayer(config = {}) {
     PLAYER_CONTAINER.addEventListener('pointerdown', handleAutoHideController);
 
     PLAYER_CONTAINER.addEventListener('pointerover', (e) => {
-        if (e.target === PLAYER_PROGRESS_OVERLAY) {
+        if (PLAYER_PROGRESS_OVERLAY.contains(e.target)) {
             HOVER_TIME.classList.remove('hide');
         }
         else {
