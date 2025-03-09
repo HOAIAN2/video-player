@@ -128,7 +128,7 @@
     text-align: center;
     color: white;
     position: absolute;
-    top: -30px;
+    top: -40px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -385,7 +385,8 @@
 
 @container (max-width: 500px) {
     .player-controller {
-        max-height: 65px;
+        max-height: 100px;
+        height: 25%;
     }
 
     .buttons-left {
@@ -403,14 +404,12 @@
     .video-timestamp>p {
         font-size: 1em;
     }
+}
 
-    /* .button-backward {
-        display: none !important;
+@container (max-width: 400px) {
+    .player-controller {
+        max-height: 65px;
     }
-
-    .button-forward {
-        display: none !important;
-    } */
 }
 
 @keyframes show-action {
