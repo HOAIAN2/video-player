@@ -11,6 +11,7 @@
  * @param {number} [config.skipSeconds=5] - Number of seconds to skip forward or backward.
  * @param {number} [config.autoHideControllerAfter=3000] - Time in milliseconds before the controller hides automatically.
  * @param {boolean} [config.forceLandscape=true] - Auto rotate to landscape when active fullscreen.
+ * @param {boolean} [config.enablePIP=true] - Show PIP button.
  * @param {Array<number>}[config.speedSettings] -List of speed setting, eg: 0.5,1,1.5,2
  * @param {{source:string,speed:string,subtitle:string}}[config.settingLabels] - Custom labels for settings.
  * @returns {DocumentFragment} - The player element containing the video and custom controls.
@@ -21,6 +22,7 @@ function createVideoPlayer(config = {}) {
         skipSeconds = 5,
         autoHideControllerAfter = 3000,
         forceLandscape = true,
+        enablePIP = true,
         speedSettings = [0.5, 1, 1.5, 2],
         settingLabels = {
             source: 'Source',
@@ -206,7 +208,7 @@ function createVideoPlayer(config = {}) {
                             <button title="backward" type="button" class="button-backward">${BACKWARD_SVG}</button>
                             <button title="forward" type="button" class="button-forward">${FORWARD_SVG}</button>
                             <button title="setting" type="button" class="button-setting">${SETTING_SVG}</button>
-                            <button title="picture in picture" type="button" class="button-pip">${PIP_SVG}</button>
+                            ${enablePIP ? `<button title="picture in picture" type="button" class="button-pip">${PIP_SVG}</button>` : ''}
                             <button title="fullscreen" type="button" class="button-fullscreen">${EXPAND_SVG}</button>
                         </div>
                     </div>
@@ -475,7 +477,8 @@ function createVideoPlayer(config = {}) {
         PLAY_BUTTON.replaceChildren(svg);
     });
 
-    PIP_BUTTON.addEventListener('pointerdown', (e) => {
+    // This button can be null by pass "false" to "enablePIP" prop
+    PIP_BUTTON?.addEventListener('pointerdown', (e) => {
         VIDEO_ELEMENT.requestPictureInPicture();
     });
 

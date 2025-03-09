@@ -51,6 +51,7 @@ const player = createVideoPlayer({
     skipSeconds: 5,
     autoHideControllerAfter: 3000, // miliseconds
     forceLandscape: true,
+    enablePIP: true,
     speedSettings: [0.5, 1, 1.5, 2],
     settingLabels: {
         speed: 'Playback speed',
@@ -72,6 +73,7 @@ document.getElementById("video-container").appendChild(player);
 | `skipSeconds` | Number | `5` | Number of seconds to skip forward or backward. |
 | `autoHideControllerAfter` | Number | `3000` | Time (ms) before the controls auto-hide. |
 | `forceLandscape` | Boolean | `true` | Auto-rotate to landscape mode in fullscreen. |
+| `enablePIP` | Boolean | `true` | Show PIP button. |
 | `speedSettings` | Array<Number> | `[0.5, 1, 1.5, 2]` | Available speed options. |
 | `settingLabels` | Object | `{ source: "Source", speed: "Speed", subtitle: "Subtitles" }` | Custom labels for settings. |
 
