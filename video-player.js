@@ -181,6 +181,14 @@ function createVideoPlayer(config = {}) {
         );
     }).join('');
 
+    const defaultCaption = captions.find(caption => caption.default);
+    let defaultLanguageLabel = '';
+    if (defaultCaption) {
+        defaultLanguageLabel = new Intl.DisplayNames([defaultCaption?.srclang], {
+            type: 'language'
+        }).of(defaultCaption.srclang);
+    }
+
     const PLAYER_ELEMENT = createElement(
         `
         <div class="player-container">
@@ -199,7 +207,7 @@ function createVideoPlayer(config = {}) {
                     <div data-type="caption">
                         ${CAPTION_SVG}
                         <p>${settingLabels.caption || ''}</p>
-                        <p>Off</p>
+                        <p>${defaultCaption ? defaultLanguageLabel : 'Off'}</p>
                     </div>
                 </div>
                 <div class="setting-content hide">
@@ -507,7 +515,6 @@ function createVideoPlayer(config = {}) {
         if (VIDEO_ELEMENT.duration) {
             VIDEO_TIMESTAMP.querySelector('p').textContent = `00:00 / ${toHHMMSS(VIDEO_ELEMENT.duration)}`;
         }
-        const defaultCaption = captions.find(caption => caption.default);
         if (defaultCaption) {
             switchCaption(defaultCaption.srclang);
         }
