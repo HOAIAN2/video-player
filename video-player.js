@@ -13,7 +13,8 @@
  * @param {boolean} [config.forceLandscape=true] - Auto rotate to landscape when active fullscreen.
  * @param {boolean} [config.enablePIP=true] - Show PIP button.
  * @param {Array<number>}[config.speedSettings] -List of speed setting, eg: 0.5,1,1.5,2
- * @param {{source:string,speed:string,subtitle:string}}[config.settingLabels] - Custom labels for settings.
+ * @param {{source:string,speed:string,caption:string}}[config.settingLabels] - Custom labels for settings.
+ * @param  {Array<{src:string,srclang:string,default:boolean}>} [config.captions] - Captions /subtitles in *.vtt format
  * @returns {DocumentFragment} - The player element containing the video and custom controls.
  */
 function createVideoPlayer(config = {}) {
@@ -27,8 +28,9 @@ function createVideoPlayer(config = {}) {
         settingLabels = {
             source: 'Source',
             speed: 'Speed',
-            subtitle: 'Subtitles',
+            caption: 'Captions',
         },
+        captions = [],
     } = config;
     function createElement(htmlString) {
         const fragment = document.createDocumentFragment();
@@ -128,7 +130,7 @@ function createVideoPlayer(config = {}) {
             <circle cx="30" cy="53" r="5" fill="currentColor"/>
             <circle cx="60" cy="73" r="5" fill="currentColor"/>
         </svg>`;
-    const SUBTITLE_SVG =
+    const CAPTION_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             <rect x="10" y="25" width="80" height="50" rx="8" fill="none" stroke="currentColor" stroke-width="5"/>
             <rect x="20" y="40" width="25" height="8" rx="2" fill="currentColor"/>
@@ -155,6 +157,29 @@ function createVideoPlayer(config = {}) {
             `
         );
     }).join('');
+    const captionSettingsHTML = captions.map(caption => {
+        const label = new Intl.DisplayNames([caption.srclang], {
+            type: 'language'
+        }).of(caption.srclang);
+        return (
+            `<div class="setting-value" data-setting-type="caption" data-setting-value="${caption.srclang}">
+                ${label}
+            </div>`
+        );
+    }).join('');
+    const tracksHTML = captions.map(caption => {
+        const label = new Intl.DisplayNames([caption.srclang], {
+            type: 'language'
+        }).of(caption.srclang);
+        return (
+            `<track
+                label="${label}"
+                kind="subtitles"
+                srclang="${caption.srclang}"
+                src="${caption.src}"
+             />`
+        );
+    }).join('');
 
     const PLAYER_ELEMENT = createElement(
         `
@@ -171,9 +196,9 @@ function createVideoPlayer(config = {}) {
                         <p>${settingLabels.source || ''}</p>
                         <p>${sources[0].label}</p>
                     </div>
-                    <div data-type="subtitle">
-                        ${SUBTITLE_SVG}
-                        <p>${settingLabels.subtitle || ''}</p>
+                    <div data-type="caption">
+                        ${CAPTION_SVG}
+                        <p>${settingLabels.caption || ''}</p>
                         <p>Off</p>
                     </div>
                 </div>
@@ -186,7 +211,9 @@ function createVideoPlayer(config = {}) {
             </div>
             <div class="action-overlay"></div>
             <div class="loading-spinner"></div>
-            <video class="player-video" src="${sources[0].src}"></video>
+            <video class="player-video" src="${sources[0].src}">
+                ${tracksHTML}
+            </video>
             <div class="player-controller hide">
                 <div class="hover-time hide"></div>
                 <div class="wrap-buttons">
@@ -337,6 +364,18 @@ function createVideoPlayer(config = {}) {
             playOrPauseVideo();
         }
     }
+    function switchCaption(langCode) {
+        const tracks = VIDEO_ELEMENT.textTracks;
+        for (let i = 0; i < tracks.length; i++) {
+            tracks[i].mode = tracks[i].language === langCode ? 'showing' : 'hidden';
+        }
+    }
+    function disableCaption() {
+        const tracks = VIDEO_ELEMENT.textTracks;
+        for (let i = 0; i < tracks.length; i++) {
+            tracks[i].mode = 'hidden';
+        }
+    }
     const seekingDebounce = debounce((time) => {
         VIDEO_ELEMENT.currentTime = time;
     }, 300);
@@ -468,6 +507,10 @@ function createVideoPlayer(config = {}) {
         if (VIDEO_ELEMENT.duration) {
             VIDEO_TIMESTAMP.querySelector('p').textContent = `00:00 / ${toHHMMSS(VIDEO_ELEMENT.duration)}`;
         }
+        const defaultCaption = captions.find(caption => caption.default);
+        if (defaultCaption) {
+            switchCaption(defaultCaption.srclang);
+        }
     });
 
     VIDEO_ELEMENT.addEventListener('play', () => {
@@ -512,10 +555,11 @@ function createVideoPlayer(config = {}) {
             SETTING_VALUES.replaceChildren(createElement(sourceSettingsHTML));
             BACK_SETTING_BUTTON.textContent = `< ${settingLabels.source}`;
         }
-        if (SETTING_TYPES.querySelector('[data-type="subtitle"]')?.contains(e.target)) {
-            return;
+        if (SETTING_TYPES.querySelector('[data-type="caption"]')?.contains(e.target)) {
             SETTING_TYPES.classList.add('hide');
             SETTING_CONTENT.classList.remove('hide');
+            SETTING_VALUES.replaceChildren(createElement(captionSettingsHTML));
+            BACK_SETTING_BUTTON.textContent = `< ${settingLabels.caption}`;
         }
         if (e.target === BACK_SETTING_BUTTON) {
             backSetting();
@@ -548,6 +592,23 @@ function createVideoPlayer(config = {}) {
                 if (!currentPaused) VIDEO_ELEMENT.play();
                 const settingValueElement = SETTING_TYPES.querySelector(`[data-type="source"]>p:last-child`);
                 if (settingValueElement) settingValueElement.textContent = source.label;
+                backSetting();
+            }
+
+            if (settingType === 'caption') {
+                const caption = captions.find(caption => caption.srclang === settingValue);
+                const settingValueElement = SETTING_TYPES.querySelector(`[data-type="caption"]>p:last-child`);
+                if (caption) {
+                    switchCaption(caption.srclang);
+                    const label = new Intl.DisplayNames([caption.srclang], {
+                        type: 'language'
+                    }).of(caption.srclang);
+                    if (settingValueElement) settingValueElement.textContent = label;
+                }
+                else {
+                    disableCaption();
+                    if (settingValueElement) settingValueElement.textContent = 'Off';
+                }
                 backSetting();
             }
         }

@@ -57,8 +57,26 @@ const player = createVideoPlayer({
         speed: 'Playback speed',
         source: 'Quality',
         // Not implemented yet
-        subtitle: 'Subtitle',
-    }
+        caption: 'Subtitle',
+    },
+    // "srclang" is language code, not country code
+    captions: [
+        {
+            src: 'caption-en.vtt',
+            srclang: 'en',
+            default: true,
+        },
+        {
+            src: 'caption-ja.vtt',
+            srclang: 'ja',
+            default: false,
+        },
+        {
+            src: 'caption-vi.vtt',
+            srclang: 'vi',
+            default: false,
+        },
+    ]
 });
 
 // Append to a container in the DOM

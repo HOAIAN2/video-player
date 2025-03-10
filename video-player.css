@@ -81,6 +81,7 @@
     bottom: 0;
     background: linear-gradient(0deg, rgba(0, 0, 0, .5), rgba(0, 0, 0, 0));
     transition: .3s;
+    transition-property: opacity;
 }
 
 .player-controller.hide {
