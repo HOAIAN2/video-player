@@ -52,6 +52,7 @@ const player = createVideoPlayer({
     autoHideControllerAfter: 3000, // miliseconds
     forceLandscape: true,
     enablePIP: true,
+    defaultVolume: 1,
     speedSettings: [0.5, 1, 1.5, 2],
     settingLabels: {
         speed: 'Playback speed',
@@ -91,8 +92,10 @@ document.getElementById("video-container").appendChild(player);
 | `autoHideControllerAfter` | Number | `3000` | Time (ms) before the controls auto-hide. |
 | `forceLandscape` | Boolean | `true` | Auto-rotate to landscape mode in fullscreen. |
 | `enablePIP` | Boolean | `true` | Show PIP button. |
+| `defaultVolume` | Number | 1 | Default video volume. |
 | `speedSettings` | Array<Number> | `[0.5, 1, 1.5, 2]` | Available speed options. |
 | `settingLabels` | Object | `{ source: "Source", speed: "Speed", subtitle: "Subtitles" }` | Custom labels for settings. |
+| `captions` | Array<{src:string,srclang:string,default:boolean} | Required | Captions /subtitles in *.vtt format. |
 
 ## Controls & Shortcuts
 
