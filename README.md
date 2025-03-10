@@ -56,7 +56,6 @@ const player = createVideoPlayer({
     settingLabels: {
         speed: 'Playback speed',
         source: 'Quality',
-        // Not implemented yet
         caption: 'Subtitle',
     },
     // "srclang" is language code, not country code
