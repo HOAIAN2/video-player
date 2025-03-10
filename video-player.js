@@ -159,16 +159,17 @@ function createVideoPlayer(config = {}) {
             `
         );
     }).join('');
-    const captionSettingsHTML = captions.map(caption => {
-        const label = new Intl.DisplayNames([caption.srclang], {
-            type: 'language'
-        }).of(caption.srclang);
-        return (
-            `<div class="setting-value" data-setting-type="caption" data-setting-value="${caption.srclang}">
-                ${label}
-            </div>`
-        );
-    }).join('');
+    const captionSettingsHTML =
+        `<div class="setting-value" data-setting-type="caption" data-setting-value="">Off</div>
+            ${captions.map(caption => {
+            const label = new Intl.DisplayNames([caption.srclang], { type: 'language' }).of(caption.srclang);
+            return (
+                `<div class="setting-value" data-setting-type="caption" data-setting-value="${caption.srclang}">
+                    ${label}
+                </div>`
+            );
+        }).join('')}`;
+
     const tracksHTML = captions.map(caption => {
         const label = new Intl.DisplayNames([caption.srclang], {
             type: 'language'
@@ -179,7 +180,7 @@ function createVideoPlayer(config = {}) {
                 kind="subtitles"
                 srclang="${caption.srclang}"
                 src="${caption.src}"
-                ${caption.default ? 'default': ''}
+                ${caption.default ? 'default' : ''}
              />`
         );
     }).join('');
@@ -391,7 +392,7 @@ function createVideoPlayer(config = {}) {
         VIDEO_ELEMENT.currentTime = time;
     }, 300);
 
-    VIDEO_ELEMENT.volume = defaultVolume
+    VIDEO_ELEMENT.volume = defaultVolume;
 
     PLAYER_CONTAINER.addEventListener('pointermove', handleAutoHideController);
 
