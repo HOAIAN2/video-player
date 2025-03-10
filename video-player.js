@@ -12,6 +12,7 @@
  * @param {number} [config.autoHideControllerAfter=3000] - Time in milliseconds before the controller hides automatically.
  * @param {boolean} [config.forceLandscape=true] - Auto rotate to landscape when active fullscreen.
  * @param {boolean} [config.enablePIP=true] - Show PIP button.
+ * @param {number} [config.defaultVolume=1] - Default video volume.
  * @param {Array<number>}[config.speedSettings] -List of speed setting, eg: 0.5,1,1.5,2
  * @param {{source:string,speed:string,caption:string}}[config.settingLabels] - Custom labels for settings.
  * @param  {Array<{src:string,srclang:string,default:boolean}>} [config.captions] - Captions /subtitles in *.vtt format
@@ -24,6 +25,7 @@ function createVideoPlayer(config = {}) {
         autoHideControllerAfter = 3000,
         forceLandscape = true,
         enablePIP = true,
+        defaultVolume = 1,
         speedSettings = [0.5, 1, 1.5, 2],
         settingLabels = {
             source: 'Source',
@@ -177,6 +179,7 @@ function createVideoPlayer(config = {}) {
                 kind="subtitles"
                 srclang="${caption.srclang}"
                 src="${caption.src}"
+                ${caption.default ? 'default': ''}
              />`
         );
     }).join('');
@@ -388,6 +391,8 @@ function createVideoPlayer(config = {}) {
         VIDEO_ELEMENT.currentTime = time;
     }, 300);
 
+    VIDEO_ELEMENT.volume = defaultVolume
+
     PLAYER_CONTAINER.addEventListener('pointermove', handleAutoHideController);
 
     PLAYER_CONTAINER.addEventListener('pointerdown', handleAutoHideController);
@@ -514,9 +519,6 @@ function createVideoPlayer(config = {}) {
     VIDEO_ELEMENT.addEventListener('loadeddata', () => {
         if (VIDEO_ELEMENT.duration) {
             VIDEO_TIMESTAMP.querySelector('p').textContent = `00:00 / ${toHHMMSS(VIDEO_ELEMENT.duration)}`;
-        }
-        if (defaultCaption) {
-            switchCaption(defaultCaption.srclang);
         }
     });
 
