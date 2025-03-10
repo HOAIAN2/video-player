@@ -518,7 +518,7 @@ function createVideoPlayer(config = {}) {
 
     VIDEO_ELEMENT.addEventListener('loadeddata', () => {
         if (VIDEO_ELEMENT.duration) {
-            VIDEO_TIMESTAMP.querySelector('p').textContent = `00:00 / ${toHHMMSS(VIDEO_ELEMENT.duration)}`;
+            VIDEO_TIMESTAMP.querySelector('p').textContent = `${toHHMMSS(VIDEO_ELEMENT.currentTime)} / ${toHHMMSS(VIDEO_ELEMENT.duration)}`;
         }
     });
 
