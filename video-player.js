@@ -297,18 +297,9 @@ function createVideoPlayer(config = {}) {
         const svg = createSVGElement(svgString);
         ACTION_OVERLAY.replaceChildren(svg);
     }
-    function handleAutoHideController() {
-        let timeoutId = 0;
-        if (PLAYER_CONTROLLER.classList.contains('hide')) {
-            PLAYER_CONTROLLER.classList.remove('hide');
-            timeoutId = setTimeout(() => {
-                PLAYER_CONTROLLER.classList.add('hide');
-            }, autoHideControllerAfter);
-        }
-        else {
-            clearTimeout(timeoutId);
-        }
-    };
+    const hideControllerDebounce = debounce(() => {
+        PLAYER_CONTROLLER.classList.add('hide');
+    }, autoHideControllerAfter);
     function toggleFullScreen() {
         if (document.fullscreenElement == PLAYER_CONTAINER) {
             document.exitFullscreen();
@@ -402,9 +393,20 @@ function createVideoPlayer(config = {}) {
     VIDEO_ELEMENT.volume = defaultVolume;
     VIDEO_ELEMENT.currentTime = defaultTime;
 
-    PLAYER_CONTAINER.addEventListener('pointermove', handleAutoHideController);
+    PLAYER_CONTAINER.addEventListener('pointermove', (e) => {
+        PLAYER_CONTROLLER.classList.remove('hide');
+        hideControllerDebounce();
+    });
 
-    PLAYER_CONTAINER.addEventListener('pointerdown', handleAutoHideController);
+    PLAYER_CONTAINER.addEventListener('pointerdown', (e) => {
+        PLAYER_CONTROLLER.classList.remove('hide');
+        hideControllerDebounce();
+    });
+
+    PLAYER_CONTAINER.addEventListener('pointerleave', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        PLAYER_CONTROLLER.classList.add('hide');
+    });
 
     PLAYER_CONTAINER.addEventListener('pointerover', (e) => {
         if (PLAYER_PROGRESS_OVERLAY.contains(e.target)) {
