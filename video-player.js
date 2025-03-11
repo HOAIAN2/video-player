@@ -8,6 +8,7 @@
  * 
  * @param {Object} config - Configuration options for the player.
  * @param {Array<{src:string,label:string}>} [config.sources] - The source URL of the video.
+ * @param {string} [config.poster] - Video poster.
  * @param {number} [config.skipSeconds=5] - Number of seconds to skip forward or backward.
  * @param {number} [config.autoHideControllerAfter=3000] - Time in milliseconds before the controller hides automatically.
  * @param {boolean} [config.forceLandscape=true] - Auto rotate to landscape when active fullscreen.
@@ -22,6 +23,7 @@
 function createVideoPlayer(config = {}) {
     const {
         sources = [],
+        poster = undefined,
         skipSeconds = 5,
         autoHideControllerAfter = 3000,
         forceLandscape = true,
@@ -229,7 +231,7 @@ function createVideoPlayer(config = {}) {
             </div>
             <div class="action-overlay"></div>
             <div class="loading-spinner"></div>
-            <video class="player-video" src="${sources[0].src}" tabindex="-1">
+            <video class="player-video" src="${sources[0].src}" tabindex="-1" ${poster ? `poster="${poster}"` : ''}>
                 ${tracksHTML}
             </video>
             <div class="player-controller hide">

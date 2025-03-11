@@ -48,6 +48,7 @@ const player = createVideoPlayer({
         { src: "your-video-720.mp4", label: "720p" },
         { src: "your-video-480.mp4", label: "480p" },
     ],
+    poster: undefined,
     skipSeconds: 5,
     autoHideControllerAfter: 3000, // miliseconds
     forceLandscape: true,
@@ -91,6 +92,7 @@ document.getElementById("video-container").appendChild(player);
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `sources` | Array<{src: string, label: string}> | Required | Video sources with labels. |
+| `poster` | string | undefined | Video poster. |
 | `skipSeconds` | Number | `5` | Number of seconds to skip forward or backward. |
 | `autoHideControllerAfter` | Number | `3000` | Time (ms) before the controls auto-hide. |
 | `forceLandscape` | Boolean | `true` | Auto-rotate to landscape mode in fullscreen. |
