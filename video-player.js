@@ -142,6 +142,10 @@ function createVideoPlayer(config = {}) {
             <rect x="20" y="60" width="15" height="8" rx="2" fill="currentColor"></rect>
             <rect x="40" y="60" width="40" height="8" rx="2" fill="currentColor"></rect>
         </svg>`;
+    const BACK_SVG =
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="60,20 30,50 60,80"/>
+        </svg>`;
 
     const speedSettingsHTML = speedSettings.map(setting => {
         return (
@@ -560,19 +564,19 @@ function createVideoPlayer(config = {}) {
             SETTING_TYPES.classList.add('hide');
             SETTING_CONTENT.classList.remove('hide');
             SETTING_VALUES.replaceChildren(createElement(speedSettingsHTML));
-            BACK_SETTING_BUTTON.textContent = `< ${settingLabels.speed}`;
+            BACK_SETTING_BUTTON.replaceChildren(createSVGElement(BACK_SVG), settingLabels.speed);
         }
         if (SETTING_TYPES.querySelector('[data-type="source"]')?.contains(e.target)) {
             SETTING_TYPES.classList.add('hide');
             SETTING_CONTENT.classList.remove('hide');
             SETTING_VALUES.replaceChildren(createElement(sourceSettingsHTML));
-            BACK_SETTING_BUTTON.textContent = `< ${settingLabels.source}`;
+            BACK_SETTING_BUTTON.replaceChildren(createSVGElement(BACK_SVG), settingLabels.source);
         }
         if (SETTING_TYPES.querySelector('[data-type="caption"]')?.contains(e.target)) {
             SETTING_TYPES.classList.add('hide');
             SETTING_CONTENT.classList.remove('hide');
             SETTING_VALUES.replaceChildren(createElement(captionSettingsHTML));
-            BACK_SETTING_BUTTON.textContent = `< ${settingLabels.caption}`;
+            BACK_SETTING_BUTTON.replaceChildren(createSVGElement(BACK_SVG), settingLabels.caption);
         }
         if (e.target === BACK_SETTING_BUTTON) {
             backSetting();
