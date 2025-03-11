@@ -13,6 +13,7 @@
  * @param {boolean} [config.forceLandscape=true] - Auto rotate to landscape when active fullscreen.
  * @param {boolean} [config.enablePIP=true] - Show PIP button.
  * @param {number} [config.defaultVolume=1] - Default video volume.
+ * @param {number} [config.defaultTime=1] - Default video current time of video.
  * @param {Array<number>}[config.speedSettings] -List of speed setting, eg: 0.5,1,1.5,2
  * @param {{source:string,speed:string,caption:string}}[config.settingLabels] - Custom labels for settings.
  * @param  {Array<{src:string,srclang:string,default:boolean}>} [config.captions] - Captions /subtitles in *.vtt format
@@ -26,6 +27,7 @@ function createVideoPlayer(config = {}) {
         forceLandscape = true,
         enablePIP = true,
         defaultVolume = 1,
+        defaultTime = 0,
         speedSettings = [0.5, 1, 1.5, 2],
         settingLabels = {
             source: 'Source',
@@ -124,21 +126,21 @@ function createVideoPlayer(config = {}) {
         </svg>`;
     const SOURCE_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            <rect x="5" y="5" width="90" height="90" rx="10" fill="none" stroke="currentColor" stroke-width="5"/>
-            <rect x="20" y="30" width="60" height="6" rx="2" fill="currentColor"/>
-            <rect x="20" y="50" width="60" height="6" rx="2" fill="currentColor"/>
-            <rect x="20" y="70" width="60" height="6" rx="2" fill="currentColor"/>
-            <circle cx="50" cy="33" r="5" fill="currentColor"/>
-            <circle cx="30" cy="53" r="5" fill="currentColor"/>
-            <circle cx="60" cy="73" r="5" fill="currentColor"/>
+            <rect x="5" y="5" width="90" height="90" rx="10" fill="none" stroke="currentColor" stroke-width="5"></rect>
+            <rect x="20" y="25" width="60" height="6" rx="2" fill="currentColor"></rect>
+            <rect x="20" y="48" width="60" height="6" rx="2" fill="currentColor"></rect>
+            <rect x="20" y="70" width="60" height="6" rx="2" fill="currentColor"></rect>
+            <circle cx="50" cy="28" r="5" fill="currentColor"></circle>
+            <circle cx="30" cy="51" r="5" fill="currentColor"></circle>
+            <circle cx="60" cy="73" r="5" fill="currentColor"></circle>
         </svg>`;
     const CAPTION_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            <rect x="10" y="25" width="80" height="50" rx="8" fill="none" stroke="currentColor" stroke-width="5"/>
-            <rect x="20" y="40" width="25" height="8" rx="2" fill="currentColor"/>
-            <rect x="55" y="40" width="25" height="8" rx="2" fill="currentColor"/>
-            <rect x="20" y="55" width="15" height="8" rx="2" fill="currentColor"/>
-            <rect x="40" y="55" width="40" height="8" rx="2" fill="currentColor"/>
+            <rect x="10" y="25" width="80" height="60" rx="8" fill="none" stroke="currentColor" stroke-width="5"></rect>
+            <rect x="20" y="40" width="25" height="8" rx="2" fill="currentColor"></rect>
+            <rect x="55" y="40" width="25" height="8" rx="2" fill="currentColor"></rect>
+            <rect x="20" y="60" width="15" height="8" rx="2" fill="currentColor"></rect>
+            <rect x="40" y="60" width="40" height="8" rx="2" fill="currentColor"></rect>
         </svg>`;
 
     const speedSettingsHTML = speedSettings.map(setting => {
@@ -393,6 +395,7 @@ function createVideoPlayer(config = {}) {
     }, 300);
 
     VIDEO_ELEMENT.volume = defaultVolume;
+    VIDEO_ELEMENT.currentTime = defaultTime;
 
     PLAYER_CONTAINER.addEventListener('pointermove', handleAutoHideController);
 

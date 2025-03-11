@@ -53,6 +53,7 @@ const player = createVideoPlayer({
     forceLandscape: true,
     enablePIP: true,
     defaultVolume: 1,
+    defaultTime: 0,
     speedSettings: [0.5, 1, 1.5, 2],
     settingLabels: {
         speed: 'Playback speed',
@@ -93,6 +94,7 @@ document.getElementById("video-container").appendChild(player);
 | `forceLandscape` | Boolean | `true` | Auto-rotate to landscape mode in fullscreen. |
 | `enablePIP` | Boolean | `true` | Show PIP button. |
 | `defaultVolume` | Number | 1 | Default video volume. |
+| `defaultTime` | Number | 1 | Default video current time of video. (second) |
 | `speedSettings` | Array<Number> | `[0.5, 1, 1.5, 2]` | Available speed options. |
 | `settingLabels` | Object | `{ source: "Source", speed: "Speed", subtitle: "Subtitles" }` | Custom labels for settings. |
 | `captions` | Array<{src:string,srclang:string,default:boolean} | Required | Captions /subtitles in *.vtt format. |
