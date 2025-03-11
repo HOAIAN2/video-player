@@ -55,10 +55,12 @@ const player = createVideoPlayer({
     defaultVolume: 1,
     defaultTime: 0,
     speedSettings: [0.5, 1, 1.5, 2],
+    // This is translate object, remember to fill all attributes
     settingLabels: {
         speed: 'Playback speed',
         source: 'Quality',
         caption: 'Subtitle',
+        off: 'Off',
     },
     // "srclang" is language code, not country code
     captions: [

@@ -15,7 +15,7 @@
  * @param {number} [config.defaultVolume=1] - Default video volume.
  * @param {number} [config.defaultTime=1] - Default video current time of video.
  * @param {Array<number>}[config.speedSettings] -List of speed setting, eg: 0.5,1,1.5,2
- * @param {{source:string,speed:string,caption:string}}[config.settingLabels] - Custom labels for settings.
+ * @param {{source:string,speed:string,caption:string,off:string}}[config.settingLabels] - Custom labels for settings.
  * @param  {Array<{src:string,srclang:string,default:boolean}>} [config.captions] - Captions /subtitles in *.vtt format
  * @returns {DocumentFragment} - The player element containing the video and custom controls.
  */
@@ -33,6 +33,7 @@ function createVideoPlayer(config = {}) {
             source: 'Source',
             speed: 'Speed',
             caption: 'Captions',
+            off: 'Off',
         },
         captions = [],
     } = config;
@@ -166,7 +167,7 @@ function createVideoPlayer(config = {}) {
         );
     }).join('');
     const captionSettingsHTML =
-        `<div class="setting-value" data-setting-type="caption" data-setting-value="">Off</div>
+        `<div class="setting-value" data-setting-type="caption" data-setting-value="">${settingLabels.off || ''}</div>
             ${captions.map(caption => {
             const label = new Intl.DisplayNames([caption.srclang], { type: 'language' }).of(caption.srclang);
             return (
@@ -217,7 +218,7 @@ function createVideoPlayer(config = {}) {
                     <div data-type="caption">
                         ${CAPTION_SVG}
                         <p>${settingLabels.caption || ''}</p>
-                        <p>${defaultCaption ? defaultLanguageLabel : 'Off'}</p>
+                        <p>${defaultCaption ? defaultLanguageLabel : settingLabels.off || ''}</p>
                     </div>
                 </div>
                 <div class="setting-content hide">
@@ -424,9 +425,13 @@ function createVideoPlayer(config = {}) {
         HOVER_TIME.textContent = toHHMMSS(percent * VIDEO_ELEMENT.duration);
     });
 
-    PLAY_BUTTON.addEventListener('pointerdown', playOrPauseVideo);
+    PLAY_BUTTON.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
+        playOrPauseVideo();
+    });
 
     VOLUME_BUTTON.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
         VIDEO_ELEMENT.muted = !VIDEO_ELEMENT.muted;
     });
 
@@ -448,6 +453,7 @@ function createVideoPlayer(config = {}) {
     });
 
     VIDEO_ELEMENT.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
         if (e.pointerType === 'mouse') {
             playOrPauseVideo();
         }
@@ -476,6 +482,7 @@ function createVideoPlayer(config = {}) {
     // Handle progress bar
     PLAYER_PROGRESS_OVERLAY.addEventListener('pointerdown', (e) => {
         e.preventDefault();
+        if (e.pointerType === 'mouse' && e.button === 2) return;
 
         // Pause video when seeking
         const wasPlaying = !VIDEO_ELEMENT.paused;
@@ -542,16 +549,27 @@ function createVideoPlayer(config = {}) {
 
     // This button can be null by pass "false" to "enablePIP" prop
     PIP_BUTTON?.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
         VIDEO_ELEMENT.requestPictureInPicture();
     });
 
-    FULLSCREEN_BUTTON.addEventListener('pointerdown', toggleFullScreen);
+    FULLSCREEN_BUTTON.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
+        toggleFullScreen();
+    });
     VIDEO_ELEMENT.addEventListener('dblclick', toggleFullScreen);
 
-    FORWARD_BUTTON.addEventListener('pointerdown', forward);
-    BACKWARD_BUTTON.addEventListener('pointerdown', backward);
+    FORWARD_BUTTON.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
+        forward();
+    });
+    BACKWARD_BUTTON.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
+        backward();
+    });
 
     SETTING_BUTTON.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
         SETTING_CONTAINER.classList.toggle('hide');
         const rect = PLAYER_CONTROLLER.getBoundingClientRect();
         SETTING_CONTAINER.style.bottom = `${rect.height + 10}px`;
@@ -559,6 +577,7 @@ function createVideoPlayer(config = {}) {
     });
 
     SETTING_CONTAINER.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button === 2) return;
         // Handle switch setting tab
         if (SETTING_TYPES.querySelector('[data-type="speed"]')?.contains(e.target)) {
             SETTING_TYPES.classList.add('hide');
@@ -624,7 +643,7 @@ function createVideoPlayer(config = {}) {
                 }
                 else {
                     disableCaption();
-                    if (settingValueElement) settingValueElement.textContent = 'Off';
+                    if (settingValueElement) settingValueElement.textContent = settingLabels.off || '';
                 }
                 backSetting();
             }
