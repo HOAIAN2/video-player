@@ -98,7 +98,7 @@ document.getElementById("video-container").appendChild(player);
 | `defaultVolume` | Number | 1 | Default video volume. |
 | `defaultTime` | Number | 1 | Default video current time of video. (second) |
 | `speedSettings` | Array<Number> | `[0.5, 1, 1.5, 2]` | Available speed options. |
-| `settingLabels` | Object | `{ source: "Source", speed: "Speed", subtitle: "Subtitles" }` | Custom labels for settings. |
+| `settingLabels` | Object | `{ source: "Source", speed: "Speed", subtitle: "Subtitles", off: "Off" }` | Custom labels for settings. |
 | `captions` | Array<{src:string,srclang:string,default:boolean} | Required | Captions /subtitles in *.vtt format. |
 
 ## Controls & Shortcuts
