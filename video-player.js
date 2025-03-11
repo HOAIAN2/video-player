@@ -68,7 +68,6 @@ function createVideoPlayer(config = {}) {
         };
     };
 
-    const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA'];
     const PLAY_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
             <polygon points="25, 15 80, 50 25, 85"/>
@@ -230,7 +229,7 @@ function createVideoPlayer(config = {}) {
             </div>
             <div class="action-overlay"></div>
             <div class="loading-spinner"></div>
-            <video class="player-video" src="${sources[0].src}">
+            <video class="player-video" src="${sources[0].src}" tabindex="-1">
                 ${tracksHTML}
             </video>
             <div class="player-controller hide">
@@ -361,14 +360,21 @@ function createVideoPlayer(config = {}) {
         if (!document.body.contains(PLAYER_CONTAINER)) {
             return window.removeEventListener('keydown', handleKeyDownEvents);
         }
-        if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return;
-        if (e.target.role === 'textbox') return;
-        if (e.ctrlKey) return;
+        if (document.activeElement !== VIDEO_ELEMENT) return;
+        e.preventDefault();
         if (e.code === 'ArrowRight') {
             forward();
         }
         if (e.code === 'ArrowLeft') {
             backward();
+        }
+        if (e.code === 'ArrowUp') {
+            if (VIDEO_ELEMENT.volume >= 0.95) VIDEO_ELEMENT.volume = 1;
+            else VIDEO_ELEMENT.volume += .05;
+        }
+        if (e.code === 'ArrowDown') {
+            if (VIDEO_ELEMENT.volume <= 0.05) VIDEO_ELEMENT.volume = 0;
+            else VIDEO_ELEMENT.volume -= .05;
         }
         if (e.code === 'Space') {
             playOrPauseVideo();
