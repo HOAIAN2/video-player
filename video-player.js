@@ -433,18 +433,20 @@ function createVideoPlayer(config = {}) {
         const offsetX = e.clientX - rect.left;
         const width = rect.width;
         const percent = (offsetX / width);
-        HOVER_TIME.textContent = toHHMMSS(percent * VIDEO_ELEMENT.duration);
-        const left = offsetX + (rect.width * 0.02);
-        const minLeft = width * 0.02 + HOVER_TIME.getBoundingClientRect().width * 0.5;
-        const maxLeft = width + width * 0.02 - HOVER_TIME.getBoundingClientRect().width * 0.5;
-        if (left < minLeft) {
-            HOVER_TIME.style.left = minLeft + 'px';
-        }
-        else if (left > maxLeft) {
-            HOVER_TIME.style.left = maxLeft + 'px';
-        }
-        else {
-            HOVER_TIME.style.left = left + 'px';
+        if (percent >= 0 && percent <= 1) {
+            HOVER_TIME.textContent = toHHMMSS(percent * VIDEO_ELEMENT.duration);
+            const left = offsetX + (rect.width * 0.02);
+            const minLeft = width * 0.02 + HOVER_TIME.getBoundingClientRect().width * 0.5;
+            const maxLeft = width + width * 0.02 - HOVER_TIME.getBoundingClientRect().width * 0.5;
+            if (left < minLeft) {
+                HOVER_TIME.style.left = minLeft + 'px';
+            }
+            else if (left > maxLeft) {
+                HOVER_TIME.style.left = maxLeft + 'px';
+            }
+            else {
+                HOVER_TIME.style.left = left + 'px';
+            }
         }
     });
 
