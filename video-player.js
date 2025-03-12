@@ -21,6 +21,12 @@
  * @returns {DocumentFragment} - The player element containing the video and custom controls.
  */
 function createVideoPlayer(config = {}) {
+    const defaultSettingLabels = {
+        source: 'Source',
+        speed: 'Speed',
+        caption: 'Captions',
+        off: 'Off',
+    };
     const {
         sources = [],
         poster = undefined,
@@ -31,14 +37,10 @@ function createVideoPlayer(config = {}) {
         defaultVolume = 1,
         defaultTime = 0,
         speedSettings = [0.5, 1, 1.5, 2],
-        settingLabels = {
-            source: 'Source',
-            speed: 'Speed',
-            caption: 'Captions',
-            off: 'Off',
-        },
+        settingLabels: settingLabelsParam = {},
         captions = [],
     } = config;
+    const settingLabels = { ...defaultSettingLabels, ...settingLabelsParam, };
     function createElement(htmlString) {
         const fragment = document.createDocumentFragment();
         const template = document.createElement('template');
