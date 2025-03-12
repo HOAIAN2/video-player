@@ -63,6 +63,7 @@ const player = createVideoPlayer({
         caption: 'Subtitle',
         off: 'Off',
     },
+    // This is native html video caption in *.vtt format: https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Audio_and_video_delivery/Adding_captions_and_subtitles_to_HTML5_video
     // "srclang" is language code, not country code
     captions: [
         {
@@ -98,7 +99,7 @@ document.getElementById("video-container").appendChild(player);
 | `forceLandscape` | Boolean | `true` | Auto-rotate to landscape mode in fullscreen. |
 | `enablePIP` | Boolean | `true` | Show PIP button. |
 | `defaultVolume` | Number | 1 | Default video volume. |
-| `defaultTime` | Number | 1 | Default video current time of video. (second) |
+| `defaultTime` | Number | 0 | Default video current time of video. (second) |
 | `speedSettings` | Array<Number> | `[0.5, 1, 1.5, 2]` | Available speed options. |
 | `settingLabels` | Object | `{ source: "Source", speed: "Speed", subtitle: "Subtitles", off: "Off" }` | Custom labels for settings. |
 | `captions` | Array<{src:string,srclang:string,default:boolean} | Required | Captions /subtitles in *.vtt format. |
