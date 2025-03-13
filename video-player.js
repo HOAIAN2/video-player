@@ -586,7 +586,12 @@ function createVideoPlayer(config = {}) {
     // This button can be null by pass "false" to "enablePIP" prop
     PIP_BUTTON?.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'mouse' && e.button === 2) return;
-        VIDEO_ELEMENT.requestPictureInPicture();
+        if (document.pictureInPictureElement === VIDEO_ELEMENT) {
+            document.exitPictureInPicture();
+        }
+        else {
+            VIDEO_ELEMENT.requestPictureInPicture();
+        }
     });
 
     FULLSCREEN_BUTTON.addEventListener('pointerdown', (e) => {
