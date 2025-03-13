@@ -228,6 +228,7 @@
 .setting-content-back>svg {
     stroke: white;
     height: 70%;
+    pointer-events: none;
 }
 
 .setting-content-back:hover {
