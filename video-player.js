@@ -66,11 +66,15 @@ function createVideoPlayer(config = {}) {
     }
     function debounce(func, delay) {
         let timeout;
-        return (...args) => {
+        function debounced(...args) {
             clearTimeout(timeout);
             timeout = setTimeout(() => { func(...args); }, delay);
+        }
+        debounced.cancel = () => {
+            clearTimeout(timeout);
         };
-    };
+        return debounced;
+    }
 
     const PLAY_SVG =
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
@@ -225,7 +229,7 @@ function createVideoPlayer(config = {}) {
                     </div>
                 </div>
                 <div class="setting-content hide">
-                    <div class="setting-content-back"> < </div>
+                    <div class="setting-content-back"></div>
                     <div class="setting-values">
                         <!-- Replace children here -->
                     </div>
@@ -555,6 +559,7 @@ function createVideoPlayer(config = {}) {
             e.preventDefault();
             updateProgress(e);
             document.removeEventListener('pointermove', handlePointerMove);
+            seekingDebounce.cancel();
             const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
             const offsetX = e.clientX - rect.left;
             const width = rect.width;
