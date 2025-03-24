@@ -528,6 +528,13 @@ function createVideoPlayer(config = {}) {
                 }
             }
         }
+        function updateVideoCurrentTime(e) {
+            const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const width = rect.width;
+            const realTime = (offsetX / width) * VIDEO_ELEMENT.duration;
+            VIDEO_ELEMENT.currentTime = realTime;
+        }
         function handlePointerMove(e) {
             e.preventDefault();
             updateProgress(e);
@@ -553,13 +560,9 @@ function createVideoPlayer(config = {}) {
                 seekingDebounce(percent * VIDEO_ELEMENT.duration);
             }
         }
-        
+
         updateProgress(e);
-        const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
-        const offsetX = e.clientX - rect.left;
-        const width = rect.width;
-        const realTime = (offsetX / width) * VIDEO_ELEMENT.duration;
-        VIDEO_ELEMENT.currentTime = realTime;
+        updateVideoCurrentTime(e);
 
         document.addEventListener('pointermove', handlePointerMove);
         document.addEventListener('pointerup', (e) => {
@@ -567,11 +570,7 @@ function createVideoPlayer(config = {}) {
             updateProgress(e);
             document.removeEventListener('pointermove', handlePointerMove);
             seekingDebounce.cancel();
-            const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
-            const offsetX = e.clientX - rect.left;
-            const width = rect.width;
-            const realTime = (offsetX / width) * VIDEO_ELEMENT.duration;
-            VIDEO_ELEMENT.currentTime = realTime;
+            updateVideoCurrentTime(e);
             HOVER_TIME.classList.add('hide');
 
             // Resume video if it was playing before
