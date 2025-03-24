@@ -553,7 +553,14 @@ function createVideoPlayer(config = {}) {
                 seekingDebounce(percent * VIDEO_ELEMENT.duration);
             }
         }
+        
         updateProgress(e);
+        const rect = PLAYER_PROGRESS_OVERLAY.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const width = rect.width;
+        const realTime = (offsetX / width) * VIDEO_ELEMENT.duration;
+        VIDEO_ELEMENT.currentTime = realTime;
+
         document.addEventListener('pointermove', handlePointerMove);
         document.addEventListener('pointerup', (e) => {
             e.preventDefault();
