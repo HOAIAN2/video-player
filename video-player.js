@@ -564,7 +564,7 @@ function createVideoPlayer(config = {}) {
             const offsetX = e.clientX - rect.left;
             const width = rect.width;
             const realTime = (offsetX / width) * VIDEO_ELEMENT.duration;
-            VIDEO_ELEMENT.currentTime = Math.max(0, Math.min(realTime, VIDEO_ELEMENT.duration));
+            VIDEO_ELEMENT.currentTime = realTime;
             HOVER_TIME.classList.add('hide');
 
             // Resume video if it was playing before
